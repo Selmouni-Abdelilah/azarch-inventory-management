@@ -5,8 +5,6 @@ trigger:
 - main
 - feature/*
 
-variables:
-  MenusDB: $(MenusDBconnection)
 
 pool:
   vmImage: windows-latest
@@ -68,7 +66,7 @@ stages:
         targetPath: '$(System.DefaultWorkingDirectory)'
     - task: AzureRmWebAppDeployment@4
       env:
-        MenusDB: $(MenusDB)
+        MenusDB: $(MenusDBconnection)
       inputs:
         ConnectionType: 'AzureRM'
         azureSubscription: 'svc-conn-to-azure'
