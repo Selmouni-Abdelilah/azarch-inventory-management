@@ -1,0 +1,80 @@
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+- feature/*
+
+variables:
+  MenusDB: $(MenusDBconnection)
+
+pool:
+  vmImage: windows-latest
+
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: Build
+    displayName: 'Build Job'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '6.0.x'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Dotnet restore'
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+        feedsToUse: 'config'
+        nugetConfigPath: 'NuGet.config'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Dotnet build'
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--configuration $(BuildConfiguration) --no-restore'
+
+    - task: DotNetCoreCLI@2
+      displayName: Publish
+      inputs:
+        command: 'publish'
+        publishWebProjects: false
+        projects: '**/*.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --no-restore'
+
+    - task: PublishPipelineArtifact@1
+      displayName: Publish pipeline artifacts
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)'
+        artifact: 'package'
+        publishLocation: 'pipeline'
+
+- stage: Deploy
+  displayName: 'Deploy Stage'
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - job: Deploy
+    displayName: 'Deploy Job'
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'package'
+        targetPath: '$(Build.ArtifactStagingDirectory)'
+    - task: AzureRmWebAppDeployment@4
+      env:
+        MenuDB: $(MenuDB)
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'svc-conn-to-azure'
+        appType: 'webAppLinux'
+        WebAppName: 'azarchinventorywebapp'
+        packageForLinux: '$(System.DefaultWorkingDirectory)/*.zip'
+        RuntimeStack: 'DOTNETCORE|6.0'
+        AppSettings: '-MenusDB $(MenusDB)'
+    
