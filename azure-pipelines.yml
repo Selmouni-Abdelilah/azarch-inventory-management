@@ -68,7 +68,7 @@ stages:
         targetPath: '$(System.DefaultWorkingDirectory)'
     - task: AzureRmWebAppDeployment@4
       env:
-        MenuDB: $(MenuDB)
+        MenusDB: $(MenusDB)
       inputs:
         ConnectionType: 'AzureRM'
         azureSubscription: 'svc-conn-to-azure'
