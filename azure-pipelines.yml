@@ -71,5 +71,18 @@ stages:
         WebAppName: 'azarchinventorywebapp'
         packageForLinux: '$(System.DefaultWorkingDirectory)/*.zip'
         RuntimeStack: 'DOTNETCORE|6.0'
-        AppSettings: '-MenusDB $(MenusDBconnection)'
+
+    - task: AzureAppServiceSettings@1
+      inputs:
+        azureSubscription: 'svc-conn-to-azure'
+        appName: 'azarchinventorywebapp'
+        resourceGroupName: 'azarch-resource-group'
+        appSettings: |
+          [
+             {
+              "name": "MenusDB",
+              "value": "$(MenusDBconnection)",
+              "slotSetting": true
+             }
+          ]
     
