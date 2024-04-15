@@ -1,0 +1,7 @@
+local.settings.json
+bin
+obj
+.vscode
+Properties
+publish
+appsettings.json

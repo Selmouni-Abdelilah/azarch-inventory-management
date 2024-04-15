@@ -1,0 +1,51 @@
+﻿@page
+
+@using Models;
+
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-5">Manage Inventory</h1>
+    @if (ViewData["menus"] != null)
+    {
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th></th>
+            </tr>
+
+
+            @foreach (var menu in ViewData["menus"] as List<inventory.Models.Menu>)
+            {
+                <tr>
+                   <td>@Html.DisplayFor(m => menu.Name)</td>
+                    <td>@Html.DisplayFor(m => menu.Description)</td>
+                    <td>@Html.DisplayFor(m => menu.Price)</td>
+                    <td>
+                        <img src="@menu.ImageUrl" alt="Menu Image" style="max-width: 100px; max-height: 100px;" />
+                    </td>
+                    <td>
+                        <form asp-page-handler="saveInventory" method="post">
+                            <input type="hidden" name="menuId" value="@menu.ID" />
+                            @Html.TextBoxFor(m=>menu.InStock)
+                            <button>Save</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+    else  {
+        <br/>
+        <h2 class="display-7">Nothing to see here folks :-)</h2>
+    }
+
+    @if (ViewData["Error"]!=null)  {
+        <p style='color: red'>@ViewData["Error"]</p>
+    }
+</div>
