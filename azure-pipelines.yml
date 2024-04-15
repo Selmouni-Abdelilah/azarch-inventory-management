@@ -65,7 +65,7 @@ stages:
       inputs:
         buildType: 'current'
         artifactName: 'package'
-        targetPath: '$(Build.ArtifactStagingDirectory)'
+        targetPath: '$(System.DefaultWorkingDirectory)'
     - task: AzureRmWebAppDeployment@4
       env:
         MenuDB: $(MenuDB)
