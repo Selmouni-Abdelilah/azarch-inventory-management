@@ -5,7 +5,6 @@ trigger:
 - main
 - feature/*
 
-
 pool:
   vmImage: windows-latest
 
@@ -65,8 +64,6 @@ stages:
         artifactName: 'package'
         targetPath: '$(System.DefaultWorkingDirectory)'
     - task: AzureRmWebAppDeployment@4
-      env:
-        MenusDB: $(MenusDBconnection)
       inputs:
         ConnectionType: 'AzureRM'
         azureSubscription: 'svc-conn-to-azure'
@@ -74,5 +71,5 @@ stages:
         WebAppName: 'azarchinventorywebapp'
         packageForLinux: '$(System.DefaultWorkingDirectory)/*.zip'
         RuntimeStack: 'DOTNETCORE|6.0'
-        AppSettings: '-MenusDB $(MenusDB)'
+        AppSettings: '-MenusDB $(MenusDBconnection)'
     
