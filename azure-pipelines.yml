@@ -78,11 +78,9 @@ stages:
         appName: 'azarchinventorywebapp'
         resourceGroupName: 'azarch-resource-group'
         appSettings: |
-          [
              {
               "name": "MenusDB",
               "value": "$(MenusDBconnection)",
               "slotSetting": true
              }
-          ]
     
